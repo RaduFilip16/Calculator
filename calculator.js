@@ -14,7 +14,21 @@ function divide(number3, number4){
     return (number3 / number4);
 }
 
-console.log(add(0,1));
-console.log(subtract(10,7));
-console.log(multiply(8,2));
-console.log(divide(10,5));
+function operate(operator, number1, number2){
+    switch (operator){
+        case "+":
+            return add(number1,number2);
+        case "-":
+            return subtract(number1, number2);
+        case "*":
+            return multiply(number1, number2);
+        case "/":
+            return divide(number1, number2);
+}
+}
+
+
+console.log(operate("+", 10, 20));
+console.log(operate("-", 10, 20));
+console.log(operate("*", 10, 20));
+console.log(operate("/", 10, 20));

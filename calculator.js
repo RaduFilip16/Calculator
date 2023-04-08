@@ -17,38 +17,43 @@ function show(element){
 
 console.log(operate("+", 2, 3));
 
-let Hn = 0; //history for previous number
+let Hn = null; //history for previous number
 let Ho = ""; //history for previous operation symb
-let F = 0; //
+let number2;
+let F = 0; //counter for new operation after = press
+let C = 0;  // counter for consecutive operations without = presses;
+let c = 0; // counter for multiple = presses
 
 number_buttons.forEach(element => {
     element.addEventListener("click", function(){
-
-        console.log('apasat');
         old_text = display.textContent;
         text = element.textContent;
         console.log(text)
               
                 if(text == 'C'){
                     display.innerHTML = 0;
-                    Hn = 0;
+                    Hn = null;
                     Ho = "";
                     F = 0;
+                    C = 0;
+                    c = 0;
                 }
                 if (text == 'DEL'){
                     if(!isNaN(old_text)){
                         old_text = old_text.slice(0, -1);
-                        display.innerHTML = old_text;
+                        if(old_text == '')
+                        display.innerHTML = 0;
+                        else display.innerHTML = old_text;
+                        
                     }
                     else if(isNaN(old_text)){
                         old_text = old_text.split("(")[0];
                         display.innerHTML = old_text;
                     }
-                      // if display is showing a number with a operation and we enter another number
-                
+                    
                 }
+                // if display is showing a number with a operation and we enter another number
                 if(isNaN(old_text) && (!isNaN(text))  && text != '=' ){
-                    console.log('se salveaza?');
                     Hn = old_text.split("(")[0];
                     console.log("Hn este: " + Hn);
                     Ho = old_text.split("(")[1].slice(0,1);
@@ -64,22 +69,34 @@ number_buttons.forEach(element => {
             else
             display.innerHTML = old_text + text;
             }
+            
             if(F == 1){
+                Hn = 0;
+                Ho = '';
+                number2 = 0;
                 display.innerHTML = text;
                 F = 0;
             }
+            c = 0;
         }
         // if display shows a number and we enter a symbol (not =)
-        if(!isNaN(old_text) && isNaN(text) && text != '=' && text != 'C' && text!='DEL'){
-        console
-        display.innerHTML = old_text + " (" + text + ")";
+        if(!isNaN(old_text) && isNaN(text) && text != '=' && text != 'C' && text!='DEL' && text!='%' && text!='+/-' && text !='.' ){
+        if(C == 1){ 
+            number2 = old_text;
+            number2 = parseInt(number2);
+            let result = operate(Ho, parseInt(Hn), number2);
+            display.innerHTML = result + "(" + text + ")";
+
+        }
+        else display.innerHTML = old_text + " (" + text + ")";
         }
        
           // if we press = after having 2 number and a operation
         
           if(text == "="){
-            let number2 = old_text; 
-            console.log("hai cu egalul si n2 este " + number2 );
+              if(!c){
+            number2 = old_text; 
+              }
             number2 = parseInt(number2);
             console.log('typeof Ho: ' + typeof Ho + ' typeof Hn ' + typeof Hn + ' typeof number2: ' + typeof number2);
             console.log ("Ho este " + Ho);
@@ -90,17 +107,22 @@ number_buttons.forEach(element => {
             display.innerHTML = result;
             Hn = result;
             F = 1;
+            c = 1;
+            C = 0;
+              
+
+
         }
          // if display is showing a number with a operation and we enter another number
         
         if(isNaN(old_text) && !isNaN(text)  && text != '='){
-            console.log('se salveaza?');
             Hn = old_text.split("(")[0];
             console.log(Hn);
             Ho = old_text.split("(")[1].slice(0,1);
             console.log(Ho)
             display.innerHTML = "";
             display.innerHTML = text;
+            C = 1;
     }
       
         // if we press a symbol after we already entered one
@@ -109,6 +131,12 @@ number_buttons.forEach(element => {
             old_text = old_text.split("(")[0] + " (" + text + ")";
             display.innerHTML = old_text;
         }
+
+        if(!isNaN(old_text) && text == '+/-' && old_text != 0){
+            old_text = old_text * -1;
+            display.innerHTML = old_text;
+                }
+
     });
     });
 
@@ -127,7 +155,9 @@ function multiply(number1, number2){
 }
 
 function divide(number1, number2){
-    return (number1 / number2);
+    if (number2 == 0)
+        return "Can't divide by 0";
+    else return (number1 / number2);
 }
 
 
